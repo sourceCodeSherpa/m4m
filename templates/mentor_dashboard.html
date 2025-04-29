@@ -8,28 +8,34 @@
 <body>
     <h1>Mentor Dashboard</h1>
 
-    <table border="1" cellpadding="10">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Bio</th>
-                <th>Expertise</th>
-                <th>Phone Number</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for mentor in mentors %}
-            <tr>
-                <td>{{ mentor[0] }}</td> <!-- ID -->
-                <td>{{ mentor[1] }}</td> <!-- Name -->
-                <td>{{ mentor[2] }}</td> <!-- Bio -->
-                <td>{{ mentor[3] }}</td> <!-- Expertise -->
-                <td>{{ mentor[4] }}</td> <!-- Phone Number -->
-            </tr>
+    <div class="container mt-5">
+        <h2 class="mb-4">Available Courses</h1>
+
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course[1] }}</h5> <!-- Course Name -->
+                        <p class="card-text">{{ course[2] }}</p>   <!-- Description -->
+                        <p><strong>Tag:</strong> {{ course[3] }}</p> <!-- Tag -->
+                        <p><strong>Media Type:</strong> {{ course[4] }}</p> <!-- Media Type -->
+
+                        {% if course[5] %}
+                            <a href="{{ course[5] }}" target="_blank" class="btn btn-primary btn-sm">Watch Video</a>
+                        {% endif %}
+                        {% if course[6] %}
+                            <a href="{{ course[6] }}" target="_blank" class="btn btn-success btn-sm">Listen Audio</a>
+                        {% endif %}
+                        {% if course[7] %}
+                            <a href="{{ course[7] }}" target="_blank" class="btn btn-warning btn-sm">Read Article</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+    </div>
     <!-- 
     Logout Button -->
     <form action="{{ url_for('logout') }}" method="get">

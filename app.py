@@ -131,12 +131,14 @@ def mentor_dashboard():
         return redirect(url_for('index'))
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM mentors")
-    mentors = cursor.fetchall()
+    # 
+    # Selecting only courses that the logged in user (mentor) has posted
+    cursor.execute("SELECT * FROM courses WHERE mentor_id = %s", (session['user_id'],))
+    courses = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template('mentor_dashboard.html', mentors=mentors)
+    return render_template('mentor_dashboard.html', courses=courses)
 # 
 # Logout Route
 @app.route('/logout')
