@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Registration</title>
+</head>
+<body>
+    <h2>Register as a Mentor</h2>
+    <form action="{{ url_for('mentor_dashboard') }}" method="POST">
+        <input type="text" name="name" placeholder="Full Name" required><br>
+        <input type="text" name="phone_number" placeholder="Phone Number" required><br>
+        <textarea name="bio" placeholder="Bio" required></textarea><br>
+        <textarea name="expertise" placeholder="What are you offering mentorship on?" required></textarea><br>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

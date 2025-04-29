@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mentor Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Mentor Dashboard</h1>
+
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Bio</th>
+                <th>Expertise</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mentor in mentors %}
+            <tr>
+                <td>{{ mentor[0] }}</td> <!-- ID -->
+                <td>{{ mentor[1] }}</td> <!-- Name -->
+                <td>{{ mentor[2] }}</td> <!-- Bio -->
+                <td>{{ mentor[3] }}</td> <!-- Expertise -->
+                <td>{{ mentor[4] }}</td> <!-- Phone Number -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- 
+    Logout Button -->
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit" style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+            Logout
+        </button>
+    </form>
+
+</body>
+</html>

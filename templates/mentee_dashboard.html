@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mentee Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Available Courses</h1>
+
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course[1] }}</h5> <!-- Course Name -->
+                        <p class="card-text">{{ course[2] }}</p>   <!-- Description -->
+                        <p><strong>Tag:</strong> {{ course[3] }}</p> <!-- Tag -->
+                        <p><strong>Media Type:</strong> {{ course[4] }}</p> <!-- Media Type -->
+
+                        {% if course[5] %}
+                            <a href="{{ course[5] }}" target="_blank" class="btn btn-primary btn-sm">Watch Video</a>
+                        {% endif %}
+                        {% if course[6] %}
+                            <a href="{{ course[6] }}" target="_blank" class="btn btn-success btn-sm">Listen Audio</a>
+                        {% endif %}
+                        {% if course[7] %}
+                            <a href="{{ course[7] }}" target="_blank" class="btn btn-warning btn-sm">Read Article</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Logout Button -->
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit" style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+            Logout
+        </button>
+    </form>
+
+</body>
+</html>
