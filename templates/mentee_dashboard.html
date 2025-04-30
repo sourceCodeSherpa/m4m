@@ -16,7 +16,7 @@
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">{{ course[1] }}</h5> <!-- Course Name -->
-                        <img src="{{ url_for('static', filename='uploads/' + course[4]) }}" class="card-img-top" alt="Course Thumbnail">
+                        <img src="{{ url_for('static', filename=course[4][7:]) }}" class="card-img-top" alt="Course Thumbnail">
                         <p class="card-text">{{ course[2] }}</p>   <!-- Description -->
                         <p><strong>Tag:</strong> {{ course[3] }}</p> <!-- Tag -->
                         <p><strong>Media Type:</strong> {{ course[4] }}</p> <!-- Media Type -->
