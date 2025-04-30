@@ -66,14 +66,17 @@ def signin():
 def register_mentee():
     if request.method == 'POST':
         name = request.form['name']
-        phone_number = request.form['phone_number']
+        username = request.form['username']
+        password = request.form['password']
+        bio = request.form['bio']
         interest = request.form['interest']
+        phone_number = request.form['phone_number']
         
         # Insert into MySQL
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO mentees (name, phone_number, interests) VALUES (%s, %s, %s)", 
-                       (name, phone_number, interest))
+        cursor.execute("INSERT INTO mentees (name, username, password, bio, interest, phone_number) VALUES (%s, %s, %s, %s, %s, %s)", 
+                       (name, username, password, bio, interest, phone_number))
         conn.commit()
         cursor.close()
         conn.close()
@@ -116,19 +119,20 @@ def mentee_dashboard():
 def register_mentor():
     if request.method == 'POST':
         name = request.form['name']
-        phone_number = request.form['phone_number']
+        username = request.form['username']
+        password = request.form['password']
         bio = request.form['bio']
         expertise = request.form['expertise']
+        phone_number = request.form['phone_number']
         # 
         # Insert into MySQL
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO mentors (name, phone_number, bio, expertise) VALUES (%s, %s, %s, %s)", 
-                       (name, phone_number, bio, expertise))
+        cursor.execute("INSERT INTO mentors (name, username, password, bio, expertise, phone_number) VALUES (%s, %s, %s, %s, %s, %s)", 
+                       (name, username, password, bio, expertise, phone_number))
         conn.commit()
         cursor.close()
         conn.close()
-
         return redirect(url_for('mentor_dashboard'))
 
     return render_template('register_mentor.html')
@@ -158,3 +162,8 @@ def logout():
     session.clear()  # Clears all the session data
     flash('You have been logged out.', 'success')
     return redirect(url_for('index'))
+# 
+# Upload Route
+@app.route('/upload', methods=["POST", "GET"])
+def upload():
+    return render_template("upload.html")
