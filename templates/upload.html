@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Course</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Upload Course</h1>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="course_name">Course Name:</label><br>
+        <input type="text" id="course_name" name="course_name" placeholder="Enter course name" required><br><br>
+
+        <label for="description">Description (max 100 characters):</label><br>
+        <textarea id="description" name="description" maxlength="100" placeholder="Brief course description" required></textarea><br><br>
+
+        <label for="tag">Tag:</label><br>
+        <select id="tag" name="tag" required>
+            <option value="Python Programming">Python Programming</option>
+            <option value="Java Programming">Java Programming</option>
+            <option value="SQL">SQL</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Data Analysis">Data Analysis</option>
+        </select><br><br>
+
+        <label for="thumbnail">Upload Thumbnail Image:</label><br>
+        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" required><br><br>
+
+        <input type="submit" value="Upload Course">
+    </form>
+      
+    
+    <!-- 
+    Logout Button -->
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit" style="background-color: red; color: white; padding: 10px; border: none; cursor: pointer;">
+            Logout
+        </button>
+    </form>
+
+</body>
+</html>

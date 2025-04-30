@@ -11,7 +11,13 @@
 
     <div class="container mt-5">
         <h1 class="mb-4">Available Courses</h1>
-
+        <!--
+        Upload Button-->
+        <form action="{{ url_for('upload') }}" method="get">
+            <button type="submit" style="background-color: blue; color: white; padding: 10px; border: none; cursor: pointer;">
+                Upload New Course
+            </button>
+        </form>
         <div class="row">
             {% for course in courses %}
             <div class="col-md-4">
