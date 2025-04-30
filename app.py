@@ -1,10 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for,  session, flash
+from flask import Flask, render_template, request, redirect, url_for,  session, flash, jsonify
 import mysql.connector
-from config import DB_CONFIG
+import os
+import africastalking
+from config import DB_CONFIG, UPLOAD_FOLDER,AFRICA_TALKING_API_KEY, AFRICA_TALKING_USERNAME
+# 
+# To store the uploaded and updated timestamps of courses
+from datetime import datetime
 # 
 # Initializing Flask
 app = Flask(__name__)
 app.secret_key = 'm4m_user_super_secret_key_for_server_to_secure_session_data'
+# 
+# Initialize the Africa's Talking SDK with your credentials
+africastalking.initialize(AFRICA_TALKING_USERNAME, AFRICA_TALKING_API_KEY)
+# 
+# Accessing the Africa's talking SMS  and airtime API services
+sms = africastalking.SMS
+airtime = africastalking.Airtime
+# 
+# Upload path for the thumbnail images
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # 
 # Connect to the database
 def get_db_connection():
@@ -17,7 +32,7 @@ def get_db_connection():
     return connection
 # 
 # Create route for the index page| home page
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 # 
@@ -166,4 +181,83 @@ def logout():
 # Upload Route
 @app.route('/upload', methods=["POST", "GET"])
 def upload():
+    if request.method == 'POST':
+        course_name = request.form['course_name']
+        description = request.form['description']
+        tag = request.form['tag']
+        created_at = datetime.now()
+        updated_at= datetime.now()
+        mentor_id = session['user_id']
+        # mentor_id = 
+        # 
+        # Checking if user uploaded file correctly
+        if 'thumbnail' not in request.files:
+            return "No file part"
+        file = request.files['thumbnail']
+        if file.filename == '':
+            return "No selected image"
+        # 
+        # Store|save the file in the designated folder in the server (i.e., static/uploads/)
+        file_name = file.filename
+        full_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+        file.save(full_path)
+        # 
+        # Insert into MySQL
+        relative_path = f"static/uploads/{file_name}"
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO courses (name, description, tag, thumbnail_url, created_at, updated_at, mentor_id) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                       (course_name, description, tag, relative_path, created_at, updated_at, mentor_id))
+        # 
+        # Send sms to mentees whose interests match the course's tag
+        try:
+            cursor.execute("SELECT phone_number FROM mentees WHERE interest = %s", (tag,))
+            mentees_numbers = cursor.fetchall()
+
+            # Extract phone numbers
+            phone_numbers = [row[0] for row in mentees_numbers]
+
+            # Send message
+            message = "Hey, there's a new course uploaded for you"
+            response = sms.send(message, phone_numbers)
+            # 
+            # Send airtime to the numbers
+            currency_code = "KES"
+            amount = 5
+            response_2 = airtime.send(phone_number = phone_numbers[0], amount = amount, currency_code = currency_code)
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+            # open_server = jsonify({"sent_to": phone_numbers, "response": response})
+            # open_server_2 = jsonify({"sent_to_2": phone_numbers, "response_2": response_2})
+            return redirect(url_for('mentor_dashboard'))
+
+        except Exception as e:
+            conn.rollback()
+            cursor.close()
+            conn.close()
+            return jsonify({"error": str(e)}), 500
+
     return render_template("upload.html")
+# 
+# Delete course option for the mentor
+@app.route('/delete_course', methods=['POST', "GET"])
+def delete_course():
+    if 'user_id' not in session or session.get('role') != 'mentor':
+        flash('Unauthorized action.', 'danger')
+        return redirect(url_for('index'))
+
+    course_id = request.form['course_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Ensure only the mentor who created the course can delete it
+    cursor.execute("DELETE FROM courses WHERE id = %s AND mentor_id = %s", (course_id, session['user_id']))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Course deleted successfully.', 'success')
+    return redirect(url_for('mentor_dashboard'))
