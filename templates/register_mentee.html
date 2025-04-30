@@ -7,10 +7,20 @@
 </head>
 <body>
     <h2>Register as a Mentee</h2>
-    <form action="{{ url_for('mentee_dashboard') }}" method="POST">
+    <form action="{{ url_for('register_mentee') }}" method="POST">
         <input type="text" name="name" placeholder="Full Name" required><br>
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="text" name="bio" placeholder="Tell us about yourself" required><br>
+        <label for="interest">Interest:</label>
+        <select id="interest" name="interest" required><br>
+            <option value="Python Programming">Python Programming</option>
+            <option value="Java Programming">Java Programming</option>
+            <option value="SQL">SQL</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Data Analysis">Data Analysis</option>
+        </select><br>
         <input type="text" name="phone_number" placeholder="Phone Number" required><br>
-        <textarea name="interests" placeholder="What would you like to be mentored on?" required></textarea><br>
         <button type="submit">Register</button>
     </form>
 </body>
