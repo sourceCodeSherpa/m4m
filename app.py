@@ -85,18 +85,30 @@ def register_mentee():
 # Mentee Dashboard (view mentors)
 @app.route('/mentee_dashboard', methods=['GET', 'POST'])
 def mentee_dashboard():
-    # 
-    # If user is not validated by session or doesn't have the mentee role, they are redirected
     if 'user_id' not in session or session.get('role') != 'mentee':
         flash('You need to sign in as a mentee to access this page.', 'danger')
         return redirect(url_for('index'))
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM courses")
-    courses = cursor.fetchall()
-    cursor.close()
-    conn.close()
 
+    conn = get_db_connection()
+
+    # Get mentee's interest using dictionary access
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT interest FROM mentees WHERE id = %s", (session['user_id'],))
+    mentee = cursor.fetchone()
+    cursor.close()
+
+    courses = []
+
+    if mentee:
+        interest = mentee['interest']
+        
+        # Now use a tuple-style cursor for courses (since your HTML template uses index-based access)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM courses WHERE tag = %s", (interest,))
+        courses = cursor.fetchall()
+        cursor.close()
+
+    conn.close()
     return render_template('mentee_dashboard.html', courses=courses)
 # 
 # Route for mentor registration
